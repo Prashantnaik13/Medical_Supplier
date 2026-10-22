@@ -1,0 +1,25 @@
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => sequelize.define('Order', {
+  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  orderNumber: { type: DataTypes.STRING(30), allowNull: false, unique: true, field: 'order_number' },
+  userId: { type: DataTypes.UUID, allowNull: false, field: 'user_id' },
+  shippingAddressId: { type: DataTypes.UUID, allowNull: true, field: 'shipping_address_id' },
+  assignedToId: { type: DataTypes.UUID, allowNull: true, field: 'assigned_to_id' },
+  buyerName: { type: DataTypes.STRING(120), allowNull: true, field: 'buyer_name' },
+  buyerOrg: { type: DataTypes.STRING(160), allowNull: true, field: 'buyer_org' },
+  billingGstin: { type: DataTypes.STRING(15), allowNull: true, field: 'billing_gstin' },
+  shippingAddressJson: { type: DataTypes.JSON, allowNull: true, field: 'shipping_address_json' },
+  status: { type: DataTypes.ENUM('PENDING', 'CONFIRMED', 'PROCESSING', 'PICKING', 'PACKED', 'READY_FOR_DISPATCH', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'), allowNull: false, defaultValue: 'PENDING' },
+  paymentStatus: { type: DataTypes.ENUM('PENDING', 'PAID', 'FAILED', 'REFUNDED'), allowNull: false, defaultValue: 'PENDING', field: 'payment_status' },
+  paymentMethod: { type: DataTypes.ENUM('UPI', 'CARD', 'BANK_TRANSFER', 'COD', 'RAZORPAY'), allowNull: false, defaultValue: 'COD', field: 'payment_method' },
+  subtotal: { type: DataTypes.DECIMAL(12, 2), allowNull: false, defaultValue: 0 },
+  tax: { type: DataTypes.DECIMAL(12, 2), allowNull: false, defaultValue: 0 },
+  shippingFee: { type: DataTypes.DECIMAL(12, 2), allowNull: false, defaultValue: 0, field: 'shipping_fee' },
+  total: { type: DataTypes.DECIMAL(12, 2), allowNull: false, defaultValue: 0 },
+  expectedDelivery: { type: DataTypes.STRING(80), allowNull: true, field: 'expected_delivery' },
+  notes: { type: DataTypes.TEXT, allowNull: true },
+  placedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'placed_at' },
+  deliveredAt: { type: DataTypes.DATE, allowNull: true, field: 'delivered_at' },
+  cancelledAt: { type: DataTypes.DATE, allowNull: true, field: 'cancelled_at' },
+}, { tableName: 'orders', indexes: [{ fields: ['user_id', 'created_at'] }, { fields: ['status'] }, { fields: ['assigned_to_id'] }] });
